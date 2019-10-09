@@ -28,7 +28,7 @@
         [self authenticatePayment:call.arguments[@"clientSecret"] result:result];
     }
     else if ([@"confirmPayment" isEqualToString:call.method]) {
-        [self confirmPayment:call.arguments[@"clientSecret"] result:result];
+        [self confirmPayment:call.arguments[@"paymentMethodId"] clientSecret:call.arguments[@"clientSecret"] result:result];
     }
     else if ([@"setupPayment" isEqualToString:call.method]) {
         [self setupPayment:call.arguments[@"paymentMethodId"] clientSecret:call.arguments[@"clientSecret"] result:result];
