@@ -25,10 +25,10 @@
         [self openStripeCardVC:result];
     }
     else if ([@"authenticatePayment" isEqualToString:call.method]) {
-        [self authenticatePayment:call.arguments[@"paymentMethodId"] clientSecret:call.arguments[@"clientSecret"] result:result];
+        [self authenticatePayment:call.arguments[@"clientSecret"] result:result];
     }
     else if ([@"confirmPayment" isEqualToString:call.method]) {
-        [self confirmPayment:call.arguments[@"paymentMethodId"] clientSecret:call.arguments[@"clientSecret"] result:result];
+        [self confirmPayment:call.arguments[@"clientSecret"] result:result];
     }
     else if ([@"setupPayment" isEqualToString:call.method]) {
         [self setupPayment:call.arguments[@"paymentMethodId"] clientSecret:call.arguments[@"clientSecret"] result:result];
@@ -77,13 +77,10 @@
     }
 }
 
--(void)authenticatePayment:(NSString*)paymentMethodId clientSecret:(NSString*)clientSecret result:(FlutterResult)result {
+-(void)authenticatePayment:(NSString*)clientSecret result:(FlutterResult)result {
     flutterResult = result;
 
-    STPPaymentIntentParams* paymentIntentParams = [[STPPaymentIntentParams alloc] initWithClientSecret:clientSecret];
-    paymentIntentParams.paymentMethodId = paymentMethodId;
-
-    [[STPPaymentHandler sharedHandler] authenticatePayment:paymentIntentParams withAuthenticationContext:self completion:^(STPPaymentHandlerActionStatus status, STPPaymentIntent * _Nullable intent, NSError * _Nullable error) {
+    [[STPPaymentHandler sharedHandler] handleNextActionForPayment:clientSecret withAuthenticationContext:self returnURL:nil completion:^(STPPaymentHandlerActionStatus status, STPPaymentIntent * _Nullable intent, NSError * _Nullable error) {
 
         if (status == STPPaymentHandlerActionStatusSucceeded) {
             self->flutterResult(intent.stripeId);
