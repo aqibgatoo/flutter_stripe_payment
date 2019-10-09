@@ -86,6 +86,14 @@ class StripePaymentPlugin(private val activity: FragmentActivity) : MethodCallHa
                     call.argument("clientSecret")!!
                 )
             }
+            "authenticatePayment" -> {
+                if (!settingsSet) {
+                    result.error("You have to set a publishable key first", null, null)
+                    return
+                }
+                currentResult = result
+                authenticatePayment(call.argument("paymentMethodId")!!, call.argument("clientSecret")!!)
+            }
             "confirmPayment" -> {
                 if (!settingsSet) {
                     result.error("You have to set a publishable key first", null, null)
@@ -238,6 +246,13 @@ class StripePaymentPlugin(private val activity: FragmentActivity) : MethodCallHa
         return false;
     }
 
+    private fun authenticatePayment(paymentMethodId: String, clientSecret: String) {
+        val params = ConfirmPaymentIntentParams.createWithPaymentMethodId(
+            paymentMethodId,
+            clientSecret
+        )
+        stripe.authenticatePayment(activity, params)
+    }
 
     private fun confirmPayment(paymentMethodId: String, clientSecret: String) {
         val params = ConfirmPaymentIntentParams.createWithPaymentMethodId(

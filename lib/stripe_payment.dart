@@ -24,6 +24,13 @@ class StripePayment {
     return token;
   }
 
+  static Future<String> authenticatePayment(String paymentMethodId, String clientSecret) async {
+    return await _channel.invokeMethod("authenticatePayment", {
+      "paymentMethodId": paymentMethodId,
+      "clientSecret": clientSecret,
+    });
+  }
+
   static Future<String> confirmPayment(String paymentMethodId, String clientSecret) async {
     return await _channel.invokeMethod("confirmPayment", {
       "paymentMethodId": paymentMethodId,
