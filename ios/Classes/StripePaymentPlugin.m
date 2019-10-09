@@ -24,6 +24,9 @@
     else if ([@"addSource" isEqualToString:call.method]) {
         [self openStripeCardVC:result];
     }
+    else if ([@"authenticatePayment" isEqualToString:call.method]) {
+        [self authenticatePayment:call.arguments[@"paymentMethodId"] clientSecret:call.arguments[@"clientSecret"] result:result];
+    }
     else if ([@"confirmPayment" isEqualToString:call.method]) {
         [self confirmPayment:call.arguments[@"paymentMethodId"] clientSecret:call.arguments[@"clientSecret"] result:result];
     }
@@ -72,6 +75,22 @@
     } else {
         flutterResult([FlutterError errorWithCode:@"Can't submit request" message:nil details:nil]);
     }
+}
+
+-(void)authenticatePayment:(NSString*)paymentMethodId clientSecret:(NSString*)clientSecret result:(FlutterResult)result {
+    flutterResult = result;
+
+    STPPaymentIntentParams* paymentIntentParams = [[STPPaymentIntentParams alloc] initWithClientSecret:clientSecret];
+    paymentIntentParams.paymentMethodId = paymentMethodId;
+
+    [[STPPaymentHandler sharedHandler] authenticatePayment:paymentIntentParams withAuthenticationContext:self completion:^(STPPaymentHandlerActionStatus status, STPPaymentIntent * _Nullable intent, NSError * _Nullable error) {
+
+        if (status == STPPaymentHandlerActionStatusSucceeded) {
+            self->flutterResult(intent.stripeId);
+        } else if (error) {
+            self->flutterResult([FlutterError errorWithCode:[NSString stringWithFormat:@"%li", (long)status] message:error.localizedDescription details:nil]);
+        }
+    }];
 }
 
 -(void)confirmPayment:(NSString*)paymentMethodId clientSecret:(NSString*)clientSecret result:(FlutterResult)result {
