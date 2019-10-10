@@ -164,6 +164,9 @@ class StripePaymentPlugin(private val activity: FragmentActivity) : MethodCallHa
                         StripeIntent.Status.Succeeded -> {
                             currentResult?.success(paymentIntent.id)
                         }
+                        StripeIntent.Status.RequiresConfirmation -> {
+                            currentResult?.success(paymentIntent.id)
+                        }
                         else -> {
                             currentResult?.error(status?.name, status?.code, null)
                         }
