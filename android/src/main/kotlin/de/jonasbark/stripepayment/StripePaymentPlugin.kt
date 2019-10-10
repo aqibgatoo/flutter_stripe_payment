@@ -92,7 +92,7 @@ class StripePaymentPlugin(private val activity: FragmentActivity) : MethodCallHa
                     return
                 }
                 currentResult = result
-                authenticatePayment(call.argument("paymentMethodId")!!, call.argument("clientSecret")!!)
+                authenticatePayment(call.argument("clientSecret")!!)
             }
             "confirmPayment" -> {
                 if (!settingsSet) {
@@ -246,12 +246,8 @@ class StripePaymentPlugin(private val activity: FragmentActivity) : MethodCallHa
         return false;
     }
 
-    private fun authenticatePayment(paymentMethodId: String, clientSecret: String) {
-        val params = ConfirmPaymentIntentParams.createWithPaymentMethodId(
-            paymentMethodId,
-            clientSecret
-        )
-        stripe.authenticatePayment(activity, params)
+    private fun authenticatePayment(clientSecret: String) {
+        stripe.authenticatePayment(activity, clientSecret)
     }
 
     private fun confirmPayment(paymentMethodId: String, clientSecret: String) {
