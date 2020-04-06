@@ -5,9 +5,9 @@
     <application
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
-        <meta-data
+        <!-- <meta-data
             android:name="com.google.android.gms.wallet.api.enabled"
-            android:value="true" />
+            android:value="true" /> -->
     </application>
 
 </manifest>
